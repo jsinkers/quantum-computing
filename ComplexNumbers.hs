@@ -284,11 +284,15 @@ cmUnitary m = if cmSquare m
                  then (cmMult m $ cmDagger m) == (cmIdentity $ length m)
                  else error "ComplexMatrix is not square"
 
+-- determine the tensor product of two matrices
+cmTensorProd :: ComplexMatrix -> ComplexMatrix -> ComplexMatrix
+cmTensorProd cm1 cm2 = [[complexMult x y | x <- p, y <- q] | p <- cm1, q <- cm2]
+
 -- test matrix
 cm1 :: ComplexMatrix
 cm1 = [[Cartesian 6 (-3), Cartesian 2 12,  Cartesian 0 (-19) ],
-                 [Cartesian 0 0,    Cartesian 5 2.1, Cartesian 17 0    ],
-                 [Cartesian 1 0,    Cartesian 2 5,   Cartesian 3 (-4.5)]]
+       [Cartesian 0 0,    Cartesian 5 2.1, Cartesian 17 0    ],
+       [Cartesian 1 0,    Cartesian 2 5,   Cartesian 3 (-4.5)]]
 
 cm2 :: ComplexMatrix
 cm2 = [[Cartesian 1 0, Cartesian 0 0,  Cartesian 0 0 ],
@@ -303,4 +307,12 @@ cm4 :: ComplexMatrix
 cm4 = [[Cartesian 2 1, Cartesian 4 1],
        [Cartesian 3 0, Cartesian 5 0]]
 
+cm5 :: ComplexMatrix
+cm5 = [[Cartesian 3 2, Cartesian 5 (-1),  Cartesian 0 2 ],
+       [Cartesian 0 0,    Cartesian 12 0, Cartesian 6 (-3)    ],
+       [Cartesian 2 0,    Cartesian 4 4,   Cartesian 9 3]]
 
+cm6 :: ComplexMatrix
+cm6 = [[Cartesian 1 0, Cartesian 3 4,  Cartesian 5 (-7) ],
+       [Cartesian 10 2,    Cartesian 6 0, Cartesian 2 5    ],
+       [Cartesian 0 0,    Cartesian 1 0,   Cartesian 2 9]]
