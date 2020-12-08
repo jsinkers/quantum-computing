@@ -1,5 +1,5 @@
 module ComplexNumbers
-  (
+    (
     ComplexNumber,
     Re,
     Im,
@@ -22,6 +22,8 @@ module ComplexNumbers
     complexPhase,
     toPolar,
     toCartesian,
+    complexCart,
+    complexEuler,
     cvAdd,
     cvScalarMult,
     cvInverse,
@@ -32,6 +34,7 @@ module ComplexNumbers
     cvDist,
     cmIdentity,
     cmAdd,
+    cmAction,
     cmScalarMult,
     cmInverse,
     cmTranspose,
@@ -42,6 +45,7 @@ module ComplexNumbers
     cmInnerProd,
     cmTrace,
     cmNorm,
+    cmPower,
     printComplexMatrix,
     showComplexMatrix
    ) where 
@@ -60,6 +64,13 @@ type Rad = Double
 type Theta = Double
 
 data ComplexNumber = Cartesian Re Im | Euler Rad Theta
+
+-- constructors for complex numbers
+complexCart :: Double -> Double -> ComplexNumber
+complexCart = Cartesian 
+
+complexEuler :: Double -> Double -> ComplexNumber
+complexEuler = Euler
 
 
 type ComplexVector = [ComplexNumber]
@@ -141,15 +152,19 @@ complexRadius = complexModulus
 
 -- getter for phase of a complex number
 complexPhase :: ComplexNumber -> Theta
-complexPhase c = t
+complexPhase c = normalisePhase t
     where (Euler _ t) = toPolar c
 
 complexPower :: Double -> ComplexNumber -> ComplexNumber
 complexPower n c = Euler (r**n) (n*t)
     where (Euler r t) = toPolar c
 
--- need a function to convert angles to (-Pi, Pi] or [0,2Pi]
-
+-- need a function to convert angles to (-Pi, Pi]
+normalisePhase :: Theta -> Theta
+normalisePhase t = y'
+    where n = fromIntegral $ floor (t / (2*pi)) 
+          y = t - 2*pi*n
+          y' = if y > pi then y - 2*pi else y
 
 -- determine roots of unity
 complexRoots :: Int -> [ComplexNumber]
@@ -288,6 +303,13 @@ cmUnitary m = if cmSquare m
 cmTensorProd :: ComplexMatrix -> ComplexMatrix -> ComplexMatrix
 cmTensorProd cm1 cm2 = [[complexMult x y | x <- p, y <- q] | p <- cm1, q <- cm2]
 
+-- determine n-th power of a complex matrix
+cmPower :: Int -> ComplexMatrix -> ComplexMatrix
+cmPower n cm
+    | n < 0 = error "power must be positive integer"
+    | n == 1 = cm
+    | otherwise = cmMult cm (cmPower (n-1) cm)
+
 -- test matrix
 cm1 :: ComplexMatrix
 cm1 = [[Cartesian 6 (-3), Cartesian 2 12,  Cartesian 0 (-19) ],
@@ -316,3 +338,4 @@ cm6 :: ComplexMatrix
 cm6 = [[Cartesian 1 0, Cartesian 3 4,  Cartesian 5 (-7) ],
        [Cartesian 10 2,    Cartesian 6 0, Cartesian 2 5    ],
        [Cartesian 0 0,    Cartesian 1 0,   Cartesian 2 9]]
+
